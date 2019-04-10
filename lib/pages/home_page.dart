@@ -1,79 +1,112 @@
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
+import '../service/service_method.dart';
+import 'package:flutter_swiper/flutter_swiper.dart';
+import 'dart:convert';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class HomePage extends StatefulWidget {
+  @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-
-  TextEditingController typeController = TextEditingController();
-  String showText = '歡迎您來到美好人間高級會所';
+  
+  String homePageContent = '正在獲取數據';
 
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('百性生活＋'),
+      ),
+      body: FutureBuilder(
+        future: getHomePageContent(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if(snapshot.hasData) {
+            var data = json.decode(snapshot.data.toString());
+            List<Map> swiperDataList = (data['data']['slides'] as List).cast();
+            List<Map> navigatorList = (data['data']['category'] as List).cast();
+            return Column(
+              children: <Widget>[
+                SwiperDiy(swiperDataList: swiperDataList),
+                TopNavigator(navigatorList: navigatorList),
+              ],
+            );
+          } else {
+            return Center(
+              child: Text('加載中'),
+            );
+          }
+          
+        },
+      ),
+    );
+  }
+}
+
+class SwiperDiy extends StatelessWidget {
+  final List swiperDataList;
+  SwiperDiy({Key key, this.swiperDataList}):super(key:key);
+  
+  @override
+  Widget build(BuildContext context){
+    // ScreenUtil.getInstance()..init(context);
+    // ScreenUtil.instance = ScreenUtil(width: 750, height: 1334)..init(context);
+    print('設備的像素密度：${ScreenUtil.pixelRatio}');
+    print('設備的高：${ScreenUtil.screenHeight}');
+    print('設備的寛：${ScreenUtil.screenWidth}');
     return Container(
-       child: Scaffold(
-         appBar: AppBar(title: Text('美好人間')),
-         body: Container(
-          child: Column(
-            children: <Widget>[
-              TextField(
-                controller: typeController,
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.all(10.0),
-                  labelText: '美女類型',
-                  helperText: '請輸入你喜歡的類型'
-                ),
-                autofocus: false,
-              ),
-              RaisedButton(
-                onPressed: () {
-                  _choiceAction();
-                },
-                child: Text('選擇完畢')
-              ),
-              Text (
-                showText,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-              )
-            ],
-          )
-         )
-       ),
+      height: ScreenUtil().setHeight(333),
+      width: ScreenUtil().setWidth(750),
+      child: Swiper(
+        itemBuilder: (BuildContext context, int index) {
+          return Image.network('${swiperDataList[index]['image']}', fit: BoxFit.fill);
+        },
+        itemCount: swiperDataList.length,
+        pagination: new SwiperPagination(),
+        autoplay: true,
+      )
+    );
+  }
+}
+
+class TopNavigator extends StatelessWidget {
+  final List navigatorList;
+
+  TopNavigator({Key key, this.navigatorList}):super(key: key);
+
+  Widget _gridViewItemUI(BuildContext context, item) {
+
+    return InkWell(
+      onTap: () {
+        print('點擊了尋航');
+      },
+      child: Column(
+        children: <Widget>[
+          Image.network(item['image'], width: ScreenUtil().setWidth(95)),
+          Text(item['mallCategoryName'], style: TextStyle(fontSize: 10.0),)
+        ],
+      ),
     );
   }
 
-  void _choiceAction(){
-    print('開始選擇你喜歡的類型。。。。');
-    if (typeController.text.toString() == '') {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(title: Text('美女類型不能為空'),)
-      );
-    } else {
-      getHttp(typeController.text.toString()).then((val){
-        setState(() {
-          showText = val['data']['name'].toString();
-        });
-      });
+  @override
+  Widget build(BuildContext context) {
+    if(navigatorList.length > 10) {
+      navigatorList.removeRange(10, navigatorList.length);
     }
+    return Container(
+      height: ScreenUtil().setHeight(320),
+      padding: EdgeInsets.all(3.0),
+      child: GridView.count(
+        crossAxisCount: 5,
+        padding: EdgeInsets.all(4.0),
+        children: navigatorList.map((item) {
+          return _gridViewItemUI(context, item);
+        }).toList(),
+      ),
+    );
   }
 
-
-  Future getHttp(String TypeText) async {
-    try {
-      Response response;
-      // map
-      var data = {'name': TypeText};
-      response = await Dio().get(
-        'https://www.easy-mock.com/mock/5c60131a4bed3a6342711498/baixing/dabaojian',
-        queryParameters: data,
-      );
-      return response.data;
-    } catch (e) {
-
-    }
-  }
+  
 }

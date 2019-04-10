@@ -1,0 +1,15 @@
+const httpHeaders = {
+  'Accept': 'application/json, text/plain, */*',
+  'Accept-Encoding': 'gzip, deflate, br',
+  'Accept-Language': 'zh-TW,zh;q=0.9',
+  'Cache-Control': 'no-cache',
+  'Connection': 'keep-alive',
+  'Content-Type': 'application/json',
+  'Cookie': '_ga=GA1.2.382687357.1554861988; _gid=GA1.2.1575183430.1554861988; Hm_lvt_022f847c4e3acd44d4a2481d9187f1e6=1554861988; SERVERID=1fa1f330efedec1559b3abbcb6e30f50|1554863758|1554861986; _gat=1; Hm_lpvt_022f847c4e3acd44d4a2481d9187f1e6=1554863759',
+  'DNT': '1',
+  'Host': 'time.geekbang.org',
+  'Origin': 'https://time.geekbang.org',
+  'Pragma': 'no-cache',
+  'Referer': 'https://time.geekbang.org/',
+  'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36',
+};

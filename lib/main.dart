@@ -9,7 +9,7 @@ class MyApp extends StatelessWidget {
     return Container(
         child: MaterialApp(
             title: '百姓生活＋',
-            debugShowCheckedModeBanner: false,
+            // debugShowCheckedModeBanner: false,
             theme: ThemeData(primaryColor: Colors.pink),
             home: IndexPage()));
   }
