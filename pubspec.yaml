@@ -26,6 +26,7 @@ dependencies:
   dio:
   flutter_swiper:
   flutter_screenutil:
+  url_launcher: ^5.0.2
 
 dev_dependencies:
   flutter_test:
